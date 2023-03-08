@@ -197,7 +197,7 @@ public class BytesSchema implements DingoSchema<byte[]> {
                 buf.ensureRemainder(1);
                 buf.write(NULL);
             } else {
-                buf.ensureRemainder(1 + 4 + data.length);
+                buf.ensureRemainder(5 + data.length);
                 buf.write(NOTNULL);
                 buf.writeInt(data.length);
                 buf.write(data);

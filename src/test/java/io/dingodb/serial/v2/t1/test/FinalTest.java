@@ -24,6 +24,47 @@ public class FinalTest {
         }
         long tag2 = System.currentTimeMillis();
 
+
+        List<KeyValue> kvs = new ArrayList<>();
+        for(Object[] record : records) {
+            KeyValue kv = re.encode(record);
+            kvs.add(kv);
+        }
+
+        long tag5 = System.currentTimeMillis();
+        for(KeyValue kv : kvs) {
+            Object[] record = rd.decode(kv);
+        }
+        long tag6 = System.currentTimeMillis();
+
+        System.out.println(ObjectSizeCalculator.getObjectSize(kvs));
+        System.out.println("Stage1 : " + (tag2 - tag1));
+        System.out.println("Stage3 : " + (tag6 - tag5));
+
+        int[] index = new int[]{4,5,10};
+        long tag3 = System.currentTimeMillis();
+        for (KeyValue kv : kvs) {
+            Object[] record = rd.decodeValue(kv, index);
+        }
+        long tag4 = System.currentTimeMillis();
+
+        System.out.println("Stage2 : " + (tag4 - tag3));
+
+    }
+
+    public static void test(String[] args) {
+        List<DingoSchema> table = getTable();
+        RecordEncoder re = new RecordEncoder(0, table);
+        RecordDecoder rd = new RecordDecoder(0, table);
+
+        List<Object[]> records = getRecords();
+
+        long tag1 = System.currentTimeMillis();
+        for(Object[] record : records) {
+            KeyValue kv = re.encode(record);
+        }
+        long tag2 = System.currentTimeMillis();
+
         List<KeyValue> kvs = new ArrayList<>();
         for(Object[] record : records) {
             KeyValue kv = re.encode(record);

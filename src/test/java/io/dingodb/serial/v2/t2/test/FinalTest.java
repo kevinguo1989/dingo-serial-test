@@ -11,7 +11,51 @@ import java.util.List;
 
 public class FinalTest {
 
+
     public static void main(String[] args) {
+        List<DingoSchema> table = getTable();
+        RecordEncoder re = new RecordEncoder(0, table);
+        RecordDecoder rd = new RecordDecoder(0, table);
+
+        List<Object[]> records = getRecords();
+
+        long tag1 = System.currentTimeMillis();
+        for(Object[] record : records) {
+            List<KeyValue> kvs = re.encode(record);
+        }
+        long tag2 = System.currentTimeMillis();
+
+        List<List<KeyValue>> kvss = new ArrayList<>();
+        List<List<KeyValue>> ukvss = new ArrayList<>();
+        for(Object[] record : records) {
+            List<KeyValue> kvs = re.encode(record);
+            kvss.add(kvs);
+            List<KeyValue> ukvs = new ArrayList<>(2);
+            ukvs.add(kvs.get(0));
+            ukvs.add(kvs.get(1));
+            ukvss.add(ukvs);
+        }
+
+        int[] index = new int[]{4,5,10};
+        long tag3 = System.currentTimeMillis();
+        for (List<KeyValue> ukvs : ukvss) {
+            Object[] record = rd.decode(ukvs, index);
+        }
+        long tag4 = System.currentTimeMillis();
+
+        long tag5 = System.currentTimeMillis();
+        for(List<KeyValue> kvs : kvss) {
+            Object[] record = rd.decode(kvs);
+        }
+        long tag6 = System.currentTimeMillis();
+
+        System.out.println(ObjectSizeCalculator.getObjectSize(kvss));
+        System.out.println("Stage1 : " + (tag2 - tag1));
+        System.out.println("Stage3 : " + (tag6 - tag5));
+        System.out.println("Stage2 : " + (tag4 - tag3));
+    }
+
+    public static void test(String[] args) {
         List<DingoSchema> table = getTable();
         RecordEncoder re = new RecordEncoder(0, table);
         RecordDecoder rd = new RecordDecoder(0, table);

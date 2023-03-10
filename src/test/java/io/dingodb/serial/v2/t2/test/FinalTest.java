@@ -55,7 +55,8 @@ public class FinalTest {
         System.out.println("Stage2 : " + (tag4 - tag3));
     }
 
-    public static void test(String[] args) {
+
+    public static void test() {
         List<DingoSchema> table = getTable();
         RecordEncoder re = new RecordEncoder(0, table);
         RecordDecoder rd = new RecordDecoder(0, table);
